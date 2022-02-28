@@ -1,0 +1,75 @@
+---
+title: "Análise de Sobrevivência e Confiabilidade<br>Sobrevida - Fiocruz: *AIDS Clássico*"
+date: "Em: `r format(Sys.Date(), format='%d/%m/%Y')` | **Manaus/AM/BR** <br><br> Dados oriundos de:<br>*Carvalho MS, Andreozzi VL, Codeço CT, Campos DP, Barbosa MTS, Shimakura SE. Análise de sobrevivência: teoria e aplicações em saúde. Rio de Janeiro: Editora FIOCRUZ, 2011.*"
+subtitle: "**Ariane Hayana Thomé de Farias <br> João Claudio da Silva Araujo Lobato**"
+output:
+  rmdformats::downcute:
+    number_sections: true
+    css: custom.css
+    self_contained: true
+    thumbnails: false
+    lightbox: true
+pkgdown:
+  as_is: true
+editor_options: 
+ markdown: 
+  wrap: 72
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+library(rmdformats)
+library(tidyverse)
+library(survival)
+opts_chunk$set(echo = FALSE,
+	             cache = FALSE,
+               prompt = FALSE,
+               tidy = FALSE,
+               comment = NA,
+               message = FALSE,
+               warning = FALSE)
+```
+
+# **Introdução**
+
+Os dados são provenientes de coortes hospitalares de pacientes portadores de HIV. A primeira coorte é constituída dos pacientes portadores de HIV atendidos entre 1986 e 2000 no Instituto de Pesquisa Clínica Evandro Chagas (Ipec/Fiocruz). Dessa coorte, obteve-se uma amostra de 193 indivíduos que foram diagnosticados como portadores de Aids (critério CDC 1993) durante o período de acompanhamento.
+
+# **Dicionário de variáveis**
+
+<center>
+
+![](imagens/fig-1.png)
+
+
+</center>
+
+# **Leitura dos dados**
+
+```{r }
+ipec<-read.table("dados/ipec.csv",header=T,sep=";")
+```
+
+
+Visualizando o banco de dados:
+
+```{r echo=FALSE}
+ipec |> 
+  DT::datatable()
+```
+
+<br>
+
+a. No formato clássico:
+
+```{r echo=FALSE}
+# Criando a variável resposta da análise de sobrevivência,
+# combinando as informações de tempo e status 
+suv_class <- Surv(ipec$tempo, ipec$status);suv_class
+
+```
+
+b. No formato de processo de contagem:
+
+```{r echo=FALSE}
+suv_cont <- Surv(ipec$ini, ipec$fim, ipec$status);suv_cont
+```
