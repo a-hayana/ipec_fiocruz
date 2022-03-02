@@ -4,7 +4,7 @@ date: "Em: `r format(Sys.Date(), format='%d/%m/%Y')` | **Manaus/AM/BR** <br><br>
 subtitle: "**Ariane Hayana Thomé de Farias <br> João Claudio da Silva Araujo Lobato**"
 output:
   rmdformats::downcute:
-    number_sections: true
+    number_sections: false
     css: custom.css
     self_contained: true
     thumbnails: false
@@ -21,6 +21,7 @@ library(knitr)
 library(rmdformats)
 library(tidyverse)
 library(survival)
+library(purrr)
 opts_chunk$set(echo = FALSE,
 	             cache = FALSE,
                prompt = FALSE,
@@ -38,7 +39,97 @@ Os dados são provenientes de coortes hospitalares de pacientes portadores de HI
 
 <center>
 
-![](imagens/fig-1.png)
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-vyl0{background-color:#8a4646;border-color:#ffffff;color:#FFF;font-family:Verdana, Geneva, sans-serif !important;
+  font-size:14px;font-weight:bold;text-align:center;vertical-align:middle}
+.tg .tg-ja7q{background-color:#8a4646;border-color:#ffffff;color:#ffffff;font-family:Verdana, Geneva, sans-serif !important;
+  font-size:14px;font-style:italic;text-align:left;vertical-align:top}
+.tg .tg-f9a0{background-color:#8a4646;border-color:#ffffff;color:#ffffff;font-family:Verdana, Geneva, sans-serif !important;
+  font-size:14px;font-weight:bold;text-align:center;vertical-align:top}
+.tg .tg-wane{background-color:#8a4646;border-color:#ffffff;color:#ffffff;font-family:Verdana, Geneva, sans-serif !important;
+  font-size:14px;font-weight:bold;text-align:left;vertical-align:top}
+.tg .tg-n7pz{background-color:#8a4646;border-color:#ffffff;color:#ffffff;font-family:Verdana, Geneva, sans-serif !important;
+  font-size:14px;text-align:center;vertical-align:middle}
+.tg .tg-0zs5{background-color:#8a4646;border-color:#ffffff;color:#ffffff;font-family:Verdana, Geneva, sans-serif !important;
+  font-size:14px;text-align:left;vertical-align:middle}
+.tg .tg-eox4{background-color:#8a4646;border-color:#ffffff;color:#ffffff;font-family:Verdana, Geneva, sans-serif !important;
+  font-size:14px;font-weight:bold;text-align:center;vertical-align:middle}
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-f9a0">Variável</th>
+    <th class="tg-wane">Descrição</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-n7pz">id</td>
+    <td class="tg-0zs5">Identificação do paciente</td>
+  </tr>
+  <tr>
+    <td class="tg-eox4">ini</td>
+    <td class="tg-0zs5">Data do diagnóstico da Aids (em dias)</td>
+  </tr>
+  <tr>
+    <td class="tg-eox4">fim</td>
+    <td class="tg-0zs5">Data do óbito (ou perda do paciente)</td>
+  </tr>
+  <tr>
+    <td class="tg-eox4">tempo</td>
+    <td class="tg-0zs5">Dias de sobrevivência do diagnóstico até o óbito</td>
+  </tr>
+  <tr>
+    <td class="tg-eox4">status</td>
+    <td class="tg-0zs5">0 = censura<br>1 = óbito</td>
+  </tr>
+  <tr>
+    <td class="tg-eox4">sexo</td>
+    <td class="tg-ja7q">F = feminino<br>M = masculino</td>
+  </tr>
+  <tr>
+    <td class="tg-eox4">escola</td>
+    <td class="tg-0zs5">0 = sem escolaridade<br>1 = ensino fundamental<br>2 = ensino médio<br>3 = ensino superior</td>
+  </tr>
+  <tr>
+    <td class="tg-eox4">idade</td>
+    <td class="tg-0zs5">Idade na data do diagnóstico de Aids (20 a 68 anos)</td>
+  </tr>
+  <tr>
+    <td class="tg-vyl0">risco</td>
+    <td class="tg-0zs5">0 = homossexual masculino<br>1 = usuário de drogas injetáveis<br>2 = transfusão<br>3 = contato sexual com HIV+<br>5 = hétero c/múltiplos parceiros<br>6 = dois fatores de risco</td>
+  </tr>
+  <tr>
+    <td class="tg-vyl0">acompan</td>
+    <td class="tg-0zs5">Acompanhamento: <br>0 = ambulatorial/hospital-dia<br>1 = internação posterior<br>2 = internação imediata</td>
+  </tr>
+  <tr>
+    <td class="tg-vyl0">obito</td>
+    <td class="tg-ja7q">S = óbito<br>N = não óbito<br>I = ignorado</td>
+  </tr>
+  <tr>
+    <td class="tg-vyl0">anotrat</td>
+    <td class="tg-0zs5">Ano do início do tratamento (1990 a 2000), <br>sendo 9 = sem tratamento</td>
+  </tr>
+  <tr>
+    <td class="tg-vyl0">tratam</td>
+    <td class="tg-0zs5">Terapia antirretroviral:<br>0 = nenhum<br>1 = mono<br>2 = combinada<br>3 = potente</td>
+  </tr>
+  <tr>
+    <td class="tg-vyl0">doenca</td>
+    <td class="tg-0zs5">De apresentação: <br>1 = pcp<br>2 = pcp pulmonar<br>3 = pcp disseminada<br>4 = toxoplasmose<br>5 = sarcoma<br>7 = outra doença<br>8 = candidíase<br>9 = duas doenças<br>10 = herpes<br>99 = definido por cd4</td>
+  </tr>
+  <tr>
+    <td class="tg-vyl0">propcp</td>
+    <td class="tg-0zs5">Profilaxia para pneumocistis: <br>0 = sem profilaxia<br>2 = primária<br>3 = secundária<br>4 = ambas</td>
+  </tr>
+</tbody>
+</table>
 
 
 </center>
@@ -73,3 +164,82 @@ b. No formato de processo de contagem:
 ```{r echo=FALSE}
 suv_cont <- Surv(ipec$ini, ipec$fim, ipec$status);suv_cont
 ```
+
+Substitua as informações ignoradas codificadas com 9/99 ou I por NA (padrão do R):
+
+
+```{r}
+# Substituindo os códigos 9, 99 ou I por NA (padrão do R para missing)
+ipec$anotrat[ipec$anotrat == 9] <- NA
+ipec$obito[ipec$obito == "I"] <- NA
+```
+
+Observações importantes:
+
+> - Na variável `doença` o 9 significa duas doenças definidoras e 99 significa que o caso foi definido por CD4, por isso NÃO devem ser alterados. 
+> - Na variável `anotrat` 9 indica a ausência de tratamento (paciente morre antes dos antirretrovirais) e não missing.
+
+
+### Alterações nos dados conforme codificação correta das variáveis:
+
+```{r echo=FALSE}
+
+ipec <- ipec |> 
+  mutate(status = as.factor(status),
+         sexo = as.factor(sexo),
+         escola = as.factor(escola),
+         risco = as.factor(risco),
+         acompan = as.factor(acompan),
+         obito = as.factor(obito),
+         tratam = as.factor(tratam),
+         doenca = as.factor(doenca),
+         propcp = as.factor(propcp))
+
+ipec |> 
+glimpse()
+
+```
+
+
+### Análise exploratória e descritiva
+
+```{r echo=FALSE}
+summary(ipec) 
+```
+
+           
+### Número de pacientes por escolaridade e por sexo
+
+```{r echo=FALSE, warning=FALSE}
+
+# Mulheres
+ipec_f <- ipec |> 
+  select(escola, sexo) |>
+  filter(sexo == "F") |> 
+  group_by(escola) |> 
+  summarise(n = n()) |> 
+  janitor::adorn_totals()
+
+# Homens
+ipec_m <- ipec |> 
+  select(escola, sexo) |>
+  filter(sexo == "M") |> 
+  group_by(escola) |> 
+  summarise(n = n())|> 
+  janitor::adorn_totals()
+
+totals_sexo <- left_join(ipec_f, ipec_m, by = "escola") 
+colnames(totals_sexo) <- c("Escolaridade", "Feminino", "Masculino")
+
+rownames(totals_sexo) <- c("Sem escolaridade",
+                  "Ensino fundamental",
+                  "Ensino médio",
+                  "Ensino superior",
+                  "Não informado",
+                  " "
+                  )
+
+totals_sexo |> kableExtra::kable()
+
+```
+
