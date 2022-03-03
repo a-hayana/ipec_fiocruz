@@ -21,7 +21,7 @@ library(knitr)
 library(rmdformats)
 library(tidyverse)
 library(survival)
-library(purrr)
+library(plotly)
 opts_chunk$set(echo = FALSE,
 	             cache = FALSE,
                prompt = FALSE,
@@ -69,7 +69,7 @@ Os dados são provenientes de coortes hospitalares de pacientes portadores de HI
 </thead>
 <tbody>
   <tr>
-    <td class="tg-n7pz">id</td>
+    <td class="tg-n7pz"><b>id</b></td>
     <td class="tg-0zs5">Identificação do paciente</td>
   </tr>
   <tr>
@@ -201,12 +201,101 @@ glimpse()
 ```
 
 
-### Análise exploratória e descritiva
+### Análise exploratória e descritiva 
+
+Selecione a variável desejada 🔽
+
+### {.tabset .tabset-pills .tab}
+
+#### Tempo
+
+<center>
 
 ```{r echo=FALSE}
-summary(ipec) 
+
+summary(ipec$tempo)
+
+plot_ly(ipec, 
+        y = ~tempo, 
+        type = "box")
+
 ```
 
+</center>
+
+#### Idade
+
+<center>
+
+```{r echo=FALSE}
+
+summary(ipec$idade)
+
+plot_ly(ipec, 
+        y = ~idade, 
+        type = "box")
+
+```
+
+</center>
+
+           
+### Frequência da escolaridade
+
+```{r echo=FALSE}
+totals_freq <- ipec |> 
+  group_by(escola) |> 
+  summarise(n = n())|> 
+  janitor::adorn_totals()
+
+rownames(totals_freq) <- c("Sem escolaridade",
+                  "Ensino fundamental",
+                  "Ensino médio",
+                  "Ensino superior",
+                  "Não informado",
+                  " "
+                  )
+
+colnames(totals_freq) <- c("Escolaridade", "Qtd.")
+
+totals_freq |> kableExtra::kable()
+```           
+           
+         
+### Frequência dos tratamentos
+
+```{r echo=FALSE}
+totals_freq_trat <- ipec |> 
+  group_by(tratam) |> 
+  summarise(n = n())|> 
+  janitor::adorn_totals()
+
+rownames(totals_freq_trat) <- c("Nenhum", "Mono", "Combinada", "Potente", " ")
+
+colnames(totals_freq_trat) <- c("Tratamentos", "Qtd.")
+
+totals_freq_trat |> kableExtra::kable()
+
+```
+
+
+### Número de eventos e censuras observadas
+
+```{r echo=FALSE, warning=FALSE}
+event_cens <- ipec |> 
+  group_by(status) |> 
+  summarise(n = n())|> 
+  janitor::adorn_totals()
+
+
+colnames(event_cens) <- c("Status", "Qtd.")
+
+rownames(event_cens) <- c("Censura", "Óbito", " ")
+
+event_cens |> kableExtra::kable()
+
+```
+           
            
 ### Número de pacientes por escolaridade e por sexo
 
@@ -243,3 +332,24 @@ totals_sexo |> kableExtra::kable()
 
 ```
 
+
+## Representação gráfica 
+
+### Distribuição das idades dos pacientes por gênero
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+plot_ly(ipec, 
+        y = ~idade, 
+        color = ~sexo, 
+        type = "box")
+```
+
+
+### Distribuição dos tempos de sobrevivência
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+
+plot_ly(ipec,
+        x = ~tempo, 
+        type = "histogram")
+```
