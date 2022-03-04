@@ -27,11 +27,15 @@ opts_chunk$set(echo = FALSE,
                prompt = FALSE,
                tidy = FALSE,
                comment = NA,
+               fig.align = "center",
                message = FALSE,
                warning = FALSE)
 ```
 
+
 # **Introdução**
+
+<center>![](https://s5.static.brasilescola.uol.com.br/be/2020/11/dia-mundial-de-luta-contra-a-aids.jpg)<center/>
 
 Os dados são provenientes de coortes hospitalares de pacientes portadores de HIV. A primeira coorte é constituída dos pacientes portadores de HIV atendidos entre 1986 e 2000 no Instituto de Pesquisa Clínica Evandro Chagas (Ipec/Fiocruz). Dessa coorte, obteve-se uma amostra de 193 indivíduos que foram diagnosticados como portadores de Aids (critério CDC 1993) durante o período de acompanhamento.
 
@@ -345,11 +349,11 @@ plot_ly(ipec,
 ```
 
 
-### Distribuição dos tempos de sobrevivência
+<!-- ### Distribuição dos tempos de sobrevivência -->
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+<!-- ```{r echo=FALSE, message=FALSE, warning=FALSE} -->
 
-plot_ly(ipec,
-        x = ~tempo, 
-        type = "histogram")
-```
+<!-- plot_ly(ipec, -->
+<!--         x = ~tempo,  -->
+<!--         type = "histogram") -->
+<!-- ``` -->
