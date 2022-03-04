@@ -148,7 +148,7 @@ ipec<-read.table("dados/ipec.csv",header=T,sep=";")
 Visualizando o banco de dados:
 
 ```{r echo=FALSE}
-ipec |> 
+ipec  %>%  
   DT::datatable()
 ```
 
@@ -188,7 +188,7 @@ Observações importantes:
 
 ```{r echo=FALSE}
 
-ipec <- ipec |> 
+ipec <- ipec %>% 
   mutate(status = as.factor(status),
          sexo = as.factor(sexo),
          escola = as.factor(escola),
@@ -199,7 +199,7 @@ ipec <- ipec |>
          doenca = as.factor(doenca),
          propcp = as.factor(propcp))
 
-ipec |> 
+ipec %>% 
 glimpse()
 
 ```
@@ -247,9 +247,9 @@ plot_ly(ipec,
 ### Frequência da escolaridade
 
 ```{r echo=FALSE}
-totals_freq <- ipec |> 
-  group_by(escola) |> 
-  summarise(n = n())|> 
+totals_freq <- ipec %>% 
+  group_by(escola) %>% 
+  summarise(n = n())%>% 
   janitor::adorn_totals()
 
 rownames(totals_freq) <- c("Sem escolaridade",
@@ -262,23 +262,23 @@ rownames(totals_freq) <- c("Sem escolaridade",
 
 colnames(totals_freq) <- c("Escolaridade", "Qtd.")
 
-totals_freq |> kableExtra::kable()
+totals_freq %>% kableExtra::kable()
 ```           
            
          
 ### Frequência dos tratamentos
 
 ```{r echo=FALSE}
-totals_freq_trat <- ipec |> 
-  group_by(tratam) |> 
-  summarise(n = n())|> 
+totals_freq_trat <- ipec %>% 
+  group_by(tratam) %>% 
+  summarise(n = n())%>% 
   janitor::adorn_totals()
 
 rownames(totals_freq_trat) <- c("Nenhum", "Mono", "Combinada", "Potente", " ")
 
 colnames(totals_freq_trat) <- c("Tratamentos", "Qtd.")
 
-totals_freq_trat |> kableExtra::kable()
+totals_freq_trat %>% kableExtra::kable()
 
 ```
 
@@ -286,9 +286,9 @@ totals_freq_trat |> kableExtra::kable()
 ### Número de eventos e censuras observadas
 
 ```{r echo=FALSE, warning=FALSE}
-event_cens <- ipec |> 
-  group_by(status) |> 
-  summarise(n = n())|> 
+event_cens <- ipec %>% 
+  group_by(status) %>% 
+  summarise(n = n())%>% 
   janitor::adorn_totals()
 
 
@@ -296,7 +296,7 @@ colnames(event_cens) <- c("Status", "Qtd.")
 
 rownames(event_cens) <- c("Censura", "Óbito", " ")
 
-event_cens |> kableExtra::kable()
+event_cens %>% kableExtra::kable()
 
 ```
            
@@ -306,19 +306,19 @@ event_cens |> kableExtra::kable()
 ```{r echo=FALSE, warning=FALSE}
 
 # Mulheres
-ipec_f <- ipec |> 
-  select(escola, sexo) |>
-  filter(sexo == "F") |> 
-  group_by(escola) |> 
-  summarise(n = n()) |> 
+ipec_f <- ipec %>% 
+  select(escola, sexo) %>%
+  filter(sexo == "F") %>% 
+  group_by(escola) %>% 
+  summarise(n = n()) %>% 
   janitor::adorn_totals()
 
 # Homens
-ipec_m <- ipec |> 
-  select(escola, sexo) |>
-  filter(sexo == "M") |> 
-  group_by(escola) |> 
-  summarise(n = n())|> 
+ipec_m <- ipec %>% 
+  select(escola, sexo) %>%
+  filter(sexo == "M") %>% 
+  group_by(escola) %>% 
+  summarise(n = n())%>% 
   janitor::adorn_totals()
 
 totals_sexo <- left_join(ipec_f, ipec_m, by = "escola") 
@@ -332,7 +332,7 @@ rownames(totals_sexo) <- c("Sem escolaridade",
                   " "
                   )
 
-totals_sexo |> kableExtra::kable()
+totals_sexo %>% kableExtra::kable()
 
 ```
 
