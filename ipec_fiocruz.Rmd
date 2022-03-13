@@ -22,6 +22,7 @@ library(rmdformats)
 library(tidyverse)
 library(survival)
 library(plotly)
+library(ggfortify)
 opts_chunk$set(echo = FALSE,
 	             cache = FALSE,
                prompt = FALSE,
@@ -368,3 +369,105 @@ plot_ly(ipec,
 <!--         x = ~tempo,  -->
 <!--         type = "histogram") -->
 <!-- ``` -->
+
+
+
+
+
+
+
+## Estimativas de Sobrevivência
+
+### Estimativas de Kaplan-Meier
+
+```{r}
+ipec<-read.table("dados/ipec.csv",header=T,sep=";")
+# KM
+km=survfit(Surv(ipec$tempo,ipec$status)~1)
+km.table=fortify(km)
+
+autoplot(km, surv.colour = '#2E9FDF', censor.colour = '#2E9FDF')+
+  labs(x = "Tempo (dias)", y = "Probabilidade de Sobrevivência", 
+       title = "Estimativas de Kaplan-Meier") + 
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        axis.title.x = element_text(face="bold", colour="#873838", size = 12),
+        axis.title.y = element_text(face="bold", colour="#873838", size = 12),
+        legend.title = element_text(face="bold", size = 10))
+
+```
+
+
+### Estimativas de Nelson-Aalen
+
+
+```{r}
+# NA
+na=survfit(coxph(Surv(ipec$tempo,ipec$status)~1))
+na.table=fortify(na)
+
+autoplot(na, surv.colour = '#FB7961', censor.colour = '#FB7961')+
+  labs(x = "Tempo (dias)", y = "Probabilidade de Sobrevivência", 
+       title = "Estimativas de Nelson-Aalen") + 
+  theme_minimal()+
+  theme(plot.title = element_text(hjust = 0.5), 
+        axis.title.x = element_text(face="bold", colour="#873838", size = 12),
+        axis.title.y = element_text(face="bold", colour="#873838", size = 12),
+        legend.title = element_text(face="bold", size = 10))
+```
+
+
+```{r eval=FALSE, include=FALSE}
+# tempo medio KM
+kmi=km
+#  Códigos no R para o cálculo do Tempo médio
+t=ipec$tempo[ipec$status==1]
+tj=c(0,as.numeric(levels(as.factor(t))))
+surv=c(1,as.numeric(levels(as.factor(kmi$surv))))
+surv=sort(surv, decreasing=T)
+k=length(tj)-1
+prod=matrix(0,k,1)
+for(j in 1:k){
+  prod[j]<-(tj[j+1]-tj[j])*surv[j]
+}
+tm=sum(prod)
+
+# tempo medio na
+nai=na
+#  Códigos no R para o cálculo do Tempo médio
+t=ipec$tempo[ipec$status==1]
+tj=c(0,as.numeric(levels(as.factor(t))))
+surv=c(1,as.numeric(levels(as.factor(nai$surv))))
+surv=sort(surv, decreasing=T)
+k=length(tj)-1
+prod=matrix(0,k,1)
+for(j in 1:k){
+  prod[j]<-(tj[j+1]-tj[j])*surv[j]
+}
+tm=sum(prod)
+
+#Tempo mediano
+#km
+#na
+```
+
+<br>
+
+Com os gráficos acima é possível notar que as estimativas de Kaplan-Meier e Nelson Aalen não apresentam uma grande diferença. Em ambos os casos, para períodos de até 1.000 dias, a probabilidade de sobrevivência se mantém acima de 50%. É perceptível também que, entre 2.000 e 2.700 dias, a probabilidade de sobrevivência parece passar por uma estagnação, tendo 42,23% de sobrevivência. No entanto quando expandimos o horizonte de dias, para uma quantidade maior que 2.700, as probabilidades de sobrevivência caem drasticamente, sendo inferior a 35%.
+
+
+
+<br>
+
+
+|                   | **Kaplan-Meier** | **Nelson Aalen** |
+|-------------------|:----------------:|:----------------:|
+| **Tempo Médio**   |     1603,062     |     1607,757     |
+| **Tempo Mediano** |       1247       |       1247       |
+
+
+<br>
+
+Com relação aos tempos médio e tempos medianos, é possível notar que há uma diferença apenas entre o tempo médio, com as estimativas de Kaplan-Meier apresentando uma quantidade de dias inferior à de Nelson Aalen, sendo 1603,062 e 1607,757 dias, respectivamente.
+
+
