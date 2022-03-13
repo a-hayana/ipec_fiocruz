@@ -402,9 +402,9 @@ plot_ly(ipec,
 
 
 
-## Estimativas de Sobrevivência
+# **Estimativas de Sobrevivência**
 
-### Estimativas de Kaplan-Meier
+## Estimativas de Kaplan-Meier
 
 ```{r}
 ipec<-read.table("dados/ipec.csv",header=T,sep=";")
@@ -424,7 +424,7 @@ autoplot(km, surv.colour = '#2E9FDF', censor.colour = '#2E9FDF')+
 ```
 
 
-### Estimativas de Nelson-Aalen
+## Estimativas de Nelson-Aalen
 
 
 ```{r}
