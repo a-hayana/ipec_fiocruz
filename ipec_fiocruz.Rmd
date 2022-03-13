@@ -1,7 +1,7 @@
 ---
 title: "Análise de Sobrevivência e Confiabilidade<br>Sobrevida - Fiocruz: *AIDS Clássico*"
 date: "Em: `r format(Sys.Date(), format='%d/%m/%Y')` | **Manaus/AM/BR** <br><br> Dados oriundos de:<br>*Carvalho MS, Andreozzi VL, Codeço CT, Campos DP, Barbosa MTS, Shimakura SE. Análise de sobrevivência: teoria e aplicações em saúde. Rio de Janeiro: Editora FIOCRUZ, 2011.*"
-subtitle: "**Ariane Hayana Thomé de Farias <br> João Claudio da Silva Araujo Lobato**"
+subtitle: "**Ariane Hayana Thomé de Farias <br> João Claudio da Silva Araujo Lobato**<br>"
 output:
   rmdformats::downcute:
     number_sections: false
@@ -32,6 +32,7 @@ opts_chunk$set(echo = FALSE,
                message = FALSE,
                warning = FALSE)
 ```
+
 
 
 ```{r include=FALSE}
@@ -218,6 +219,9 @@ Veja que, observando-se as saídas nos dois formatos, se formos analisar o últi
 
 # **Análise exploratória e descritiva**
 
+
+## **Sumarização e medidas**
+
 Para conhecer o perfil dos pacientes, bem como realizar uma análise exploratória e descritiva dos dados, abaixo foram selecionados alguns pontos importantes.
 
 `Selecione a variável desejada 🔽`
@@ -266,23 +270,145 @@ Para a variável `Idade`, podemos verificar que a idade mínima dos pacientes é
 
 #### Outros
 
-A sumarização e medidas dos dados podem ser observadas no quadro abaixo:
+A sumarização e medidas dos dados podem ser observadas nas abas abaixo:
 
 <center>
 
-```{r echo=FALSE}
-summary(ipec) 
-```
+### {.tabset .tabset-pills .tab}
+
+#### id
+
+<center>
+
+$$\text{id = Identificação do paciente}$$
 
 </center>
 
+```{r echo=FALSE}
+cbind(summary(ipec$id)) |> 
+  kableExtra::kable()
+```
 
+#### ini
+
+$$\text{ini = Data do diagnóstico da Aids (em dias)}$$
+```{r echo=FALSE}
+cbind(summary(ipec$ini)) |> 
+  kableExtra::kable()
+```
+
+
+#### fim
+
+$$\text{fim = Data do óbito (ou perda do paciente)}$$
+```{r echo=FALSE}
+cbind(summary(ipec$fim)) |> 
+  kableExtra::kable()
+```
+
+#### status
+
+$$\text{status = Censura ou óbito}$$
+```{r echo=FALSE}
+cbind(summary(ipec$status)) |> 
+  kableExtra::kable()
+```
+
+
+
+#### sexo
+
+$$\text{sexo = Masculino ou feminino}$$
+```{r echo=FALSE}
+cbind(summary(ipec$sexo)) |> 
+  kableExtra::kable()
+```
+
+#### escola
+
+$$\text{escola = Escolaridade}$$
+```{r echo=FALSE}
+cbind(summary(ipec$escola)) |> 
+  kableExtra::kable()
+```
+
+#### risco
+
+$$\text{risco = Fatores de risco}$$
+```{r echo=FALSE}
+cbind(summary(ipec$risco)) |> 
+  kableExtra::kable()
+```
+
+
+#### acompan
+
+$$\text{acompan = Acompanhamento}$$
+```{r echo=FALSE}
+cbind(summary(ipec$acompan)) |> 
+  kableExtra::kable()
+```
+
+
+#### obito
+
+$$\text{obito = Óbito/Não óbito}$$
+```{r echo=FALSE}
+cbind(summary(ipec$obito)) |> 
+  kableExtra::kable()
+```
+
+
+#### anotrat
+
+$$\text{anotrat = Ano do início do tratamento}$$
+```{r echo=FALSE}
+cbind(summary(ipec$anotrat)) |> 
+  kableExtra::kable()
+```
+
+
+
+#### tratam
+
+$$\text{tratam = Terapia antirretroviral}$$
+```{r echo=FALSE}
+cbind(summary(ipec$tratam)) |> 
+  kableExtra::kable()
+```
+
+
+#### doenca
+
+$$\text{doenca = Doença de apresentação}$$
+```{r echo=FALSE}
+cbind(summary(ipec$doenca)) |> 
+  kableExtra::kable()
+```
+
+
+#### propcp
+
+$$\text{propcp = Profilaxia para pneumocistis}$$
+```{r echo=FALSE}
+cbind(summary(ipec$propcp)) |> 
+  kableExtra::kable()
+```
+
+
+
+</center>
 
 <br>
 
 
+## **Tabelas**
+
+`Selecione a tabela desejada 🔽`
+
+### {.tabset}
            
-### Frequência da escolaridade
+#### Frequência da escolaridade
 
 ```{r echo=FALSE}
 totals_freq <- ipec %>% 
@@ -304,7 +430,7 @@ totals_freq %>% kableExtra::kable()
 ```           
            
          
-### Frequência dos tratamentos
+#### Frequência dos tratamentos
 
 ```{r echo=FALSE}
 totals_freq_trat <- ipec %>% 
@@ -321,7 +447,7 @@ totals_freq_trat %>% kableExtra::kable()
 ```
 
 
-### Número de eventos e censuras observadas
+#### Número de eventos e censuras observadas
 
 ```{r echo=FALSE, warning=FALSE}
 event_cens <- ipec %>% 
@@ -339,7 +465,7 @@ event_cens %>% kableExtra::kable()
 ```
            
            
-### Número de pacientes por escolaridade e por sexo
+#### Número de pacientes por escolaridade e por sexo
 
 ```{r echo=FALSE, warning=FALSE}
 
@@ -375,7 +501,7 @@ totals_sexo %>% kableExtra::kable()
 ```
 
 
-## Representação gráfica 
+## **Representação gráfica**
 
 ### Distribuição das idades dos pacientes por gênero
 
