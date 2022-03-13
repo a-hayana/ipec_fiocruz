@@ -239,6 +239,10 @@ plot_ly(ipec,
 
 </center>
 
+Para a variável `Tempo`, podemos verificar que o tempo mínimo de sobrevivência no período considerado do diagnóstico até o óbito é de 16 dias e o tempo máximo de 3.228 dias. Ao avaliarmos a média e mediana, percebe-se que correspondem a 938,2 e 852,0, respectivamente.
+
+<br>
+
 #### Idade
 
 <center>
@@ -254,6 +258,28 @@ plot_ly(ipec,
 ```
 
 </center>
+
+Para a variável `Idade`, podemos verificar que a idade mínima dos pacientes é de 20 anos e a máxima de 68 anos. Ao avaliarmos a média e mediana, percebe-se que a média de idade é de 36,55 e a idade mediana de 35 anos.
+
+<br>
+
+
+#### Outros
+
+A sumarização e medidas dos dados podem ser observadas no quadro abaixo:
+
+<center>
+
+```{r echo=FALSE}
+summary(ipec) 
+```
+
+</center>
+
+
+
+<br>
+
 
            
 ### Frequência da escolaridade
