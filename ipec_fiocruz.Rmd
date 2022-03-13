@@ -33,6 +33,11 @@ opts_chunk$set(echo = FALSE,
 ```
 
 
+```{r include=FALSE}
+ipec<-read.table("dados/ipec.csv",header=T,sep=";")
+```
+
+
 # **Introdução**
 
 <center>![](https://s5.static.brasilescola.uol.com.br/be/2020/11/dia-mundial-de-luta-contra-a-aids.jpg)<center/>
@@ -40,6 +45,8 @@ opts_chunk$set(echo = FALSE,
 Os dados são provenientes de coortes hospitalares de pacientes portadores de HIV. A primeira coorte é constituída dos pacientes portadores de HIV atendidos entre 1986 e 2000 no Instituto de Pesquisa Clínica Evandro Chagas (Ipec/Fiocruz). Dessa coorte, obteve-se uma amostra de 193 indivíduos que foram diagnosticados como portadores de Aids (critério CDC 1993) durante o período de acompanhamento.
 
 # **Dicionário de variáveis**
+
+Para conhecermos as informações contidas na coorte em estudo, abaixo segue a lista de variáveis e suas respectivas descrições. Note que o banco de dados possui  15 variáveis das quais, temos: `r names(ipec)`.
 
 <center>
 
@@ -138,59 +145,38 @@ Os dados são provenientes de coortes hospitalares de pacientes portadores de HI
 
 </center>
 
-# **Leitura dos dados**
 
-```{r }
-ipec<-read.table("dados/ipec.csv",header=T,sep=";")
-```
-
-
-Visualizando o banco de dados:
+Desta forma, podemos então visualizar previamente os dados:
 
 ```{r echo=FALSE}
 ipec  %>%  
   DT::datatable()
 ```
 
+Observa-se que o paciente `r ipec[1,1]` é do sexo `r ifelse(ipec$sexo[1]=="M", "masculino", "feminino")`, tem `r ipec$idade[1]` anos e foi acompanhado por `r ipec$tempo[1]` dias até a data do seu óbito.
+
+
 <br>
 
-a. No formato clássico:
-
-```{r echo=FALSE}
-# Criando a variável resposta da análise de sobrevivência,
-# combinando as informações de tempo e status 
-suv_class <- Surv(ipec$tempo, ipec$status);suv_class
-
-```
-
-b. No formato de processo de contagem:
-
-```{r echo=FALSE}
-suv_cont <- Surv(ipec$ini, ipec$fim, ipec$status);suv_cont
-```
-
-Substitua as informações ignoradas codificadas com 9/99 ou I por NA (padrão do R):
-
-
-```{r}
-# Substituindo os códigos 9, 99 ou I por NA (padrão do R para missing)
-ipec$anotrat[ipec$anotrat == 9] <- NA
-ipec$obito[ipec$obito == "I"] <- NA
-```
-
-Observações importantes:
+Conforme podemos observar, existem alguns dados faltantes na base de dados. Também percebe-se que algumas informações precisam ser manipuladas conforme os objetivos do estudo. Segundo os autores, 
 
 > - Na variável `doença` o 9 significa duas doenças definidoras e 99 significa que o caso foi definido por CD4, por isso NÃO devem ser alterados. 
 > - Na variável `anotrat` 9 indica a ausência de tratamento (paciente morre antes dos antirretrovirais) e não missing.
 
+Portanto, seguindo as observações mencionadas anteriormente, fez-se a substituição das informações ignoradas codificadas com `9/99` ou `I` por `NA`.
 
-### Alterações nos dados conforme codificação correta das variáveis:
+
+```{r}
+ipec$anotrat[ipec$anotrat == 9] <- NA
+ipec$obito[ipec$obito == "I"] <- NA
+```
+
+Outra parte importante na preparação dos dados consistiu em identificar se a classificação estava correta. Assim, identificamos que algumas variáveis estavam classificadas como numéricas em vez de categóricas, fez-se então alterações nos dados conforme codificação correta das variáveis, obtendo-se os seguintes resultados:
 
 ```{r echo=FALSE}
 
 ipec <- ipec %>% 
-  mutate(status = as.factor(status),
-         sexo = as.factor(sexo),
+  mutate(sexo = as.factor(sexo),
          escola = as.factor(escola),
          risco = as.factor(risco),
          acompan = as.factor(acompan),
@@ -205,9 +191,35 @@ glimpse()
 ```
 
 
-### Análise exploratória e descritiva 
+Com isso, podemos expressar a formulação no formato clássico e de contagem no contexto da análise de sobrevivência:
 
-Selecione a variável desejada 🔽
+
+- No formato clássico, será:
+
+```{r echo=FALSE}
+suv_class <- Surv(ipec$tempo, ipec$status);suv_class
+```
+
+- No formato de processo de contagem:
+
+```{r echo=FALSE}
+suv_cont <- Surv(ipec$ini, ipec$fim, ipec$status);suv_cont
+```
+
+
+Veja que, observando-se as saídas nos dois formatos, se formos analisar o último paciente (o *193º*), podemos inferir algumas informações:
+
+* Processo clássico: `r Surv(ipec$tempo, ipec$status)[[193]]` dias de acompanhamento;
+* Processo de contagem: início do acompanhamento no `r Surv(ipec$ini, ipec$fim, ipec$status)[[193]]`º dia e fim no `r Surv(ipec$ini, ipec$fim, ipec$status)[[193,2]]`º dia do estudo (`r Surv(ipec$ini, ipec$fim, ipec$status)[[193,2]] - Surv(ipec$ini, ipec$fim, ipec$status)[[193]]` dias do processo clássico).
+  * Status: É censurado no seu último dia de acompanhamento. 
+
+
+
+# **Análise exploratória e descritiva**
+
+Para conhecer o perfil dos pacientes, bem como realizar uma análise exploratória e descritiva dos dados, abaixo foram selecionados alguns pontos importantes.
+
+`Selecione a variável desejada 🔽`
 
 ### {.tabset .tabset-pills .tab}
 
@@ -220,8 +232,7 @@ Selecione a variável desejada 🔽
 summary(ipec$tempo)
 
 plot_ly(ipec, 
-        y = ~tempo, 
-        type = "box")
+        y = ~tempo, type = "box", name = "Tempo")
 
 ```
 
@@ -237,7 +248,7 @@ summary(ipec$idade)
 
 plot_ly(ipec, 
         y = ~idade, 
-        type = "box")
+        type = "box", name = "Idade")
 
 ```
 
