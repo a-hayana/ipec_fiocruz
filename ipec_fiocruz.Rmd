@@ -291,7 +291,7 @@ cbind(summary(ipec$id)) |>
 
 #### ini
 
-$$\text{ini = Data do diagnóstico da Aids (em dias)}$$
+$$\text{ini = Data dos diagnósticos da Aids (em dias)}$$
 ```{r echo=FALSE}
 cbind(summary(ipec$ini)) |> 
   kableExtra::kable()
