@@ -270,139 +270,34 @@ Para a variável `Idade`, podemos verificar que a idade mínima dos pacientes é
 
 #### Outros
 
-A sumarização e medidas dos dados podem ser observadas nas abas abaixo:
+A sumarização e medidas das demais variáveis estão dispostas a seguir. 
 
-<center>
 
-### {.tabset .tabset-pills .tab}
-
-#### id
-
-<center>
-
-$$\text{id = Identificação do paciente}$$
-
-</center>
-
-```{r echo=FALSE}
-cbind(summary(ipec$id)) |> 
-  kableExtra::kable()
+```{r}
+summary(ipec)
 ```
 
-#### ini
+Algumas informações importantes cabem destaque:
 
-$$\text{ini = Data dos diagnósticos da Aids (em dias)}$$
-```{r echo=FALSE}
-cbind(summary(ipec$ini)) |> 
-  kableExtra::kable()
-```
+- Do total de 193 pacientes, $74,6\%$ é do sexo *masculino* e $25,4\%$ do sexo *feminino*;
 
+- A maioria dos pacientes não tinha escolaridade ($30,6\%$) ou cursaram até o ensino médio ($28,5\%$). Do total de pacientes, apenas $12,4\%$ tinham *ensino superior*;
 
-#### fim
+- Entre os pacientes em situação de risco, 133 foram infectados por via sexual, dentre os quais 87 eram homossexual masculino, 30 tiveram contato sexual com HIV+ e 16 pacientes eram héteros com múltiplos parceiros;
 
-$$\text{fim = Data do óbito (ou perda do paciente)}$$
-```{r echo=FALSE}
-cbind(summary(ipec$fim)) |> 
-  kableExtra::kable()
-```
+- O estudo realizou o acompanhamento dos pacientes durante $4.822$ dias (conforme o valor máximo apresentado na tabela `fim`, que corresponde a data do óbito ou perda do paciente);
 
-#### status
-
-$$\text{status = Censura ou óbito}$$
-```{r echo=FALSE}
-cbind(summary(ipec$status)) |> 
-  kableExtra::kable()
-```
+- Dos 193 pacientes, 80 não evoluíram a óbito, 21 foram ignorados e 92 alcançaram o desfecho (óbito).
 
 
 
-#### sexo
-
-$$\text{sexo = Masculino ou feminino}$$
-```{r echo=FALSE}
-cbind(summary(ipec$sexo)) |> 
-  kableExtra::kable()
-```
-
-#### escola
-
-$$\text{escola = Escolaridade}$$
-```{r echo=FALSE}
-cbind(summary(ipec$escola)) |> 
-  kableExtra::kable()
-```
-
-#### risco
-
-$$\text{risco = Fatores de risco}$$
-```{r echo=FALSE}
-cbind(summary(ipec$risco)) |> 
-  kableExtra::kable()
-```
-
-
-#### acompan
-
-$$\text{acompan = Acompanhamento}$$
-```{r echo=FALSE}
-cbind(summary(ipec$acompan)) |> 
-  kableExtra::kable()
-```
-
-
-#### obito
-
-$$\text{obito = Óbito/Não óbito}$$
-```{r echo=FALSE}
-cbind(summary(ipec$obito)) |> 
-  kableExtra::kable()
-```
-
-
-#### anotrat
-
-$$\text{anotrat = Ano do início do tratamento}$$
-```{r echo=FALSE}
-cbind(summary(ipec$anotrat)) |> 
-  kableExtra::kable()
-```
-
-
-
-#### tratam
-
-$$\text{tratam = Terapia antirretroviral}$$
-```{r echo=FALSE}
-cbind(summary(ipec$tratam)) |> 
-  kableExtra::kable()
-```
-
-
-#### doenca
-
-$$\text{doenca = Doença de apresentação}$$
-```{r echo=FALSE}
-cbind(summary(ipec$doenca)) |> 
-  kableExtra::kable()
-```
-
-
-#### propcp
-
-$$\text{propcp = Profilaxia para pneumocistis}$$
-```{r echo=FALSE}
-cbind(summary(ipec$propcp)) |> 
-  kableExtra::kable()
-```
-
-
-
-</center>
 
 <br>
 
 
 ## **Tabelas**
+
+Abaixo encontram-se algumas tabela com informações adicionais:
 
 `Selecione a tabela desejada 🔽`
 
@@ -429,6 +324,8 @@ colnames(totals_freq) <- c("Escolaridade", "Qtd.")
 totals_freq %>% kableExtra::kable()
 ```           
            
+Conforme apresentado, a maioria dos pacientes estudou até o ensino médio. Somente 24 possuíam nível superior e 11 não informaram a escolaridade.
+
          
 #### Frequência dos tratamentos
 
@@ -446,6 +343,7 @@ totals_freq_trat %>% kableExtra::kable()
 
 ```
 
+No levantamento sobre as frequências nos tratamentos, 44 não tiveram nenhum tratamento e 14 tiveram o tratamento `Potente`. A maioria dos pacientes foram tratados com o tratamento do tipo `Mono` (100 pacientes, ao todo).
 
 #### Número de eventos e censuras observadas
 
@@ -463,6 +361,7 @@ rownames(event_cens) <- c("Censura", "Óbito", " ")
 event_cens %>% kableExtra::kable()
 
 ```
+
            
            
 #### Número de pacientes por escolaridade e por sexo
