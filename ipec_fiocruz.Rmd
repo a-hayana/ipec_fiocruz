@@ -460,3 +460,107 @@ Com os gráficos acima é possível notar que as estimativas de Kaplan-Meier e N
 Com relação aos tempos médio e tempos medianos, é possível notar que há uma diferença apenas entre o tempo médio, com as estimativas de Kaplan-Meier apresentando uma quantidade de dias inferior à de Nelson Aalen, sendo 1603,062 e 1607,757 dias, respectivamente.
 
 
+
+## Estimação Paramétrica
+
+
+```{r}
+require(survival)
+
+ajuste1=survreg(Surv(ipec$tempo,ipec$status)~1,dist="exponential")
+alpha=exp(ajuste1$coefficients[1])
+
+
+ajuste2=survreg(Surv(ipec$tempo,ipec$status)~1,dist="weibull")
+alpha=exp(ajuste2$coefficients[1])
+gama=1/(ajuste2$scale)
+
+
+ajuste3=survreg(Surv(ipec$tempo,ipec$status)~1,dist="lognorm")
+mu=ajuste3$coefficients[1]
+sigma=ajuste3$scale;
+```
+
+
+
+```{r}
+require(ggplot2)
+
+km=survfit(Surv(ipec$tempo,ipec$status)~1)
+ste=exp(-km$time/2012)
+stw<- exp(-(km$time/2306.232)^0.7774315)
+stln<- pnorm((-log(km$time)+ 7.267088 )/1.883987 ) 
+
+
+ggplot() +
+geom_step(aes(x= km$time, y=km$surv,col="Kaplan-Meier"), lwd=1.5) +
+geom_line(aes(x= km$time, y=ste,col="Exponencial"), lwd=1.2,lty=2) +
+geom_line(aes(x= km$time, y=stw,col="Weibull"), lwd=1.2,lty=2) +
+geom_line(aes(x= km$time, y=stln,col="Log-Normal"), lwd=1.2,lty=2) +
+ggtitle("Comparação das curvas dos modelos") +
+theme_classic()+theme(text = element_text(size=15),
+                      axis.title.x = element_text(margin=margin(15,0,0,0)),
+                      axis.title.y = element_text(margin=margin(0,15,0,0)))+
+labs(x = "Horas",y="Probabilidades de Sobreviência") +
+theme(legend.title = element_blank())
+```
+
+### Linearização
+
+
+```{r}
+par(mfrow=c(1,3))
+EKM<-km$surv
+par(mfrow=c(1,3))
+plot(ste,EKM,pch=16,ylim=range(c(0.0,1)), xlim=range(c(0,1)), ylab = "S(t): Kaplan-Meier", xlab="S(t): exponencial",col="green")
+lines(c(0,1), c(0,1), type="l", lty=1)
+plot(stw,EKM,pch=16,ylim=range(c(0.0,1)), xlim=range(c(0,1)), ylab = "S(t): Kaplan-Meier",  xlab="S(t): Weibull",col="blue")
+lines(c(0,1), c(0,1), type="l", lty=1)
+plot(stln,EKM,pch=16,ylim=range(c(0.0,1)), xlim=range(c(0,1)), ylab = "S(t): Kaplan-Meier",xlab="S(t): log-normal",col="yellow")
+lines(c(0,1), c(0,1), type="l", lty=1)
+```
+
+Por meio do teste gráfico realizado acima vemos que o modelo Log-Normal está melhor ajustado, se encontrando mais próximo da reta.
+
+
+
+```{r}
+require(flexsurv)
+ajuste4 <- flexsurvreg(Surv(ipec$tempo,ipec$status) ~ 1, dist = "gengamma")
+LVE <- ajuste1$loglik[2]
+LVW <- ajuste2$loglik[2]
+LVL <- ajuste3$loglik[2]
+LVG <- ajuste4$loglik
+TRV1 <- 2*(LVG-LVE)
+TRV2 <- 2*(LVG-LVW)
+TRV3 <- 2*(LVG-LVL)
+p1 <- 1-pchisq(TRV1,2);p1
+p2 <- 1-pchisq(TRV2,1);p2
+p3 <- 1-pchisq(TRV3,1);p3
+```
+
+
+
+A qualidade do ajuste foi verificada utilizando o teste da razão de verossimilhanças entre os 3 modelos com os ajustes com as distruições Exponencial, Weibull e Log-Normal  sob $\mathcal{H}_0$ sendo a Gama Generalizada}, sob $\mathcal{H}_1$. Os p-valores resultantes foram de $0,001183409$ para o teste com modelo exponencial, $0,02639434$ para o modelo Weibull e $0,9361311$ para a Log-Normal , assim, o modelo Log-Normal está melhor ajustado ao nível de significância de $5\%$.  assim como vimos pela análise gráfica.
+
+## Tempo médio e mediano
+
+Assim partiremos para o calculo do Tempo Médio e Tempo Médiano de vida do isolador. Seguindo as propridades da Distribuição Log-Normal temos que:
+
+$$E(T)=exp(7.2671 + 0.6334^2/2)$$ e
+
+$$Mediana=exp(7.2671) $$
+
+Logo, as estimativas para o tempo médio e mediano são respectivamente:
+
+```{r}
+#tempo medio
+exp(7.2671 +0.6334^2/2)
+#tempo mediano
+exp(7.2671)
+#percentual de falhas após 500 horas de uso
+#(log(500)+7.224766)/0.9505452
+```
+
+
+
