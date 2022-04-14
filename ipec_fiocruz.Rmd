@@ -209,6 +209,7 @@ suv_cont <- Surv(ipec$ini, ipec$fim, ipec$status);suv_cont
 ```
 
 
+
 Veja que, observando-se as saídas nos dois formatos, se formos analisar o último paciente (o *193º*), podemos inferir algumas informações:
 
 * Processo clássico: `r Surv(ipec$tempo, ipec$status)[[193]]` dias de acompanhamento;
