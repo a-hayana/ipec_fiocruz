@@ -625,6 +625,32 @@ Com relação aos tempos médio e tempos medianos, é possível notar que há um
 
 ## Estimação Paramétrica
 
+Agora partiremos para os ajustes dos modelos paramétricos com distribuição Exponencial, Weibull e Log-Normal. Mas antes, vamos conhecer um pouco sobre estas distribuíções.
+
+
+A distribuição exponencial possui a seguinte função densidade de probabilidade:
+
+![](https://wikimedia.org/api/rest_v1/media/math/render/svg/a693ce9cd1fcd15b0732ff5c5b8040c359cc9332)
+
+Esta distribuição é muito usada para modelar tempo de falha de um equipamento.
+
+
+O modelo Weibull possui a seguinte função densidade de probabilidade:
+
+![](https://wikimedia.org/api/rest_v1/media/math/render/svg/bf8c5f6150f8eaf2a540527aa039ad517e3684ba)
+
+Em geral, suas aplicações visam a determinação do tempo de vida médio e da taxa de falhas em função do tempo da população analisada.
+
+E, por fim, o modelo Log-Normal possui a seguinte função densidade de probabilidade:
+
+![](https://wikimedia.org/api/rest_v1/media/math/render/svg/e38f9a3522b48c21d7238b077b4dec106b4a9822)
+
+
+Os ajustes para as três distribuíções podem ser vistas abaixo.
+
+$$ Exponencial:\hat{S_e(t)}= exp[-t/2017.756]$$
+$$Weibull: \hat{S_w}(t)=exp-(t/1993.215  * t)^{1.28131}$$
+$$LogNormal:\hat{S_l}=\Phi[\frac{-log(t)- \ 7.2247665   }{0.9505452 }]$$
 
 ```{r}
 require(survival)
@@ -643,7 +669,9 @@ mu=ajuste3$coefficients[1]
 sigma=ajuste3$scale;
 ```
 
+### Seleção de Modelos
 
+### Análise Gráfica
 
 ```{r}
 require(ggplot2)
@@ -663,7 +691,7 @@ ggtitle("Comparação das curvas dos modelos") +
 theme_classic()+theme(text = element_text(size=15),
                       axis.title.x = element_text(margin=margin(15,0,0,0)),
                       axis.title.y = element_text(margin=margin(0,15,0,0)))+
-labs(x = "Horas",y="Probabilidades de Sobreviência") +
+labs(x = "Dias",y="Probabilidades de Sobreviência") +
 theme(legend.title = element_blank())
 ```
 
@@ -717,12 +745,20 @@ Logo, as estimativas para o tempo médio e mediano são respectivamente:
 
 ```{r}
 #tempo medio
-exp(7.2671 +0.6334^2/2)
+#exp(7.2671 +0.6334^2/2)
 #tempo mediano
-exp(7.2671)
+#exp(7.2671)
 #percentual de falhas após 500 horas de uso
 #(log(500)+7.224766)/0.9505452
 ```
 
 
+|                   | **Log - Normal** |
+|-------------------|:----------------:|
+| **Tempo Médio**   |     1750,572     |
+| **Tempo Mediano** |       1432,39       |
 
+
+
+
+Dado a tabela acima, temos que, modelando através da distribuíção Log-Normal, os tempos médio e medianos são de 1751 e 1432 dias, respectivamente.
