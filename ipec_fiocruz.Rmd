@@ -269,6 +269,17 @@ Para a variável `Idade`, podemos verificar que a idade mínima dos pacientes é
 <br>
 
 
+##### **Distribuição das idades dos pacientes por gênero**
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+plot_ly(ipec, 
+        y = ~idade, 
+        color = ~sexo, 
+        type = "box")
+```
+
+
+
 #### Outros
 
 A sumarização e medidas das demais variáveis estão dispostas a seguir. 
@@ -363,7 +374,7 @@ event_cens %>% kableExtra::kable()
 
 ```
 
-           
+Como podemos observar, a maioria dos pacientes foram censurados (103) e 90 alcançaram o desfecho (óbito).    
            
 #### Número de pacientes por escolaridade e por sexo
 
@@ -400,30 +411,8 @@ totals_sexo %>% kableExtra::kable()
 
 ```
 
-
-## **Representação gráfica**
-
-### Distribuição das idades dos pacientes por gênero
-
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-plot_ly(ipec, 
-        y = ~idade, 
-        color = ~sexo, 
-        type = "box")
-```
-
-
-<!-- ### Distribuição dos tempos de sobrevivência -->
-
-<!-- ```{r echo=FALSE, message=FALSE, warning=FALSE} -->
-
-<!-- plot_ly(ipec, -->
-<!--         x = ~tempo,  -->
-<!--         type = "histogram") -->
-<!-- ``` -->
-
-
-
+Na comparação entre os sexos e escolaridade dos pacientes, nota-se que a maioria dos pacientes, em sua totalidade, não possui escolaridade e neste cenário, a maioria são homens. 
+Nos demais níveis de escolaridade, os homens também são a maioria, com um total de 144 homens e 49 mulheres, sendo que apenas *uma* paciente tinha nível superior.
 
 
 
