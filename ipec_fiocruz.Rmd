@@ -621,5 +621,5 @@ Com os gráficos acima é possível notar que as estimativas de Kaplan-Meier e N
 <br>
 
 Com relação aos tempos médio e tempos medianos, é possível notar que há uma diferença apenas entre o tempo médio, com as estimativas de Kaplan-Meier apresentando uma quantidade de dias inferior à de Nelson Aalen, sendo 1603,062 e 1607,757 dias, respectivamente.
-
+ghfhfghfghtg
 
