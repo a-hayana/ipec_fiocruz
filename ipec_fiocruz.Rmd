@@ -365,7 +365,9 @@ plot_ly(ipec,
 
 
 
-## Estimativas de Sobrevivência
+# Estimativas de Sobrevivência
+
+## Estimação Não Paramétrica
 
 ### Estimativas de Kaplan-Meier
 
